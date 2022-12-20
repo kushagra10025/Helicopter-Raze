@@ -22,8 +22,13 @@ AHRCopterPawn::AHRCopterPawn():
 	UpSpeedAccel(2.f),
 	YawRotateSpeedFactor(100.f),
 	YawRotateSpeedAccel(2.f),
-	MainRotorBaseSpeed(400.f),
-	TailRotorBaseSpeed(500.f)
+	EngineStartTime(10.f),
+	EngineStartThreshold(0.5f),
+	EngineStopThreshold(0.2f),
+	MaxMainRotorBaseSpeed(400.f),
+	MaxTailRotorBaseSpeed(500.f),
+	MainRotorBaseSpeed(0.f),
+	TailRotorBaseSpeed(0.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -74,6 +79,7 @@ void AHRCopterPawn::Tick(float DeltaTime)
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Right Speed :  %f"), RightSpeed));
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Up Speed :  %f"), UpSpeed));
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("YawRot Speed :  %f"), YawRotSpeed));
+	GEngine->AddOnScreenDebugMessage(0, DeltaTime, FColor::Cyan, FString::Printf(TEXT("Engine On :  %s"), (bEngineStart ? *FString("True") : *FString("False"))));
 
 	MainRotorSpeed = FMath::Abs(ForwardSpeed) + FMath::Max(UpSpeed, 0.f) + FMath::Abs(RightSpeed) + MainRotorBaseSpeed;
 	TailRotorSpeed = YawRotSpeed + TailRotorBaseSpeed;
@@ -83,6 +89,34 @@ void AHRCopterPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AHRCopterPawn::OnEngineStartStop()
+{
+	if(bEngineStart)
+	{
+		MainRotorBaseSpeed = FMath::FInterpTo(MainRotorBaseSpeed, MaxMainRotorBaseSpeed, GetWorld()->GetDeltaSeconds(), EngineStartTime);
+		TailRotorBaseSpeed = FMath::FInterpTo(TailRotorBaseSpeed, MaxTailRotorBaseSpeed, GetWorld()->GetDeltaSeconds(), EngineStartTime);
+		if(MainRotorBaseSpeed >= (MaxMainRotorBaseSpeed - EngineStartThreshold) && TailRotorBaseSpeed >= (MaxTailRotorBaseSpeed - EngineStartThreshold))
+		{
+			bIsEngineOn = true;
+			GetWorldTimerManager().ClearTimer(THEngineStartStop);
+		}
+	}else
+	{
+		bIsEngineOn = false;
+		TargetForwardSpeed = 0.f;
+		TargetRightSpeed = 0.f;
+		TargetUpSpeed = 0.f;
+		TargetYawRotSpeed = 0.f;
+		
+		MainRotorBaseSpeed = FMath::FInterpTo(MainRotorBaseSpeed, 0.f, GetWorld()->GetDeltaSeconds(), EngineStartTime);
+		TailRotorBaseSpeed = FMath::FInterpTo(TailRotorBaseSpeed, 0.f, GetWorld()->GetDeltaSeconds(), EngineStartTime);
+		if(MainRotorBaseSpeed <= (EngineStopThreshold) && TailRotorBaseSpeed <= (EngineStopThreshold))
+		{
+			GetWorldTimerManager().ClearTimer(THEngineStartStop);
+		}
+	}
 }
 
 void AHRCopterPawn::UpdateBladesIfPossible(bool bSetBlurBlade)
@@ -103,21 +137,31 @@ void AHRCopterPawn::UpdateBladesIfPossible(bool bSetBlurBlade)
 
 void AHRCopterPawn::MoveForwards(const float Value)
 {
+	if(!bIsEngineOn) return;
 	TargetForwardSpeed = ForwardSpeedFactor * Value;
 }
 
 void AHRCopterPawn::MoveRight(const float Value)
 {
+	if(!bIsEngineOn) return;
 	TargetRightSpeed = RightSpeedFactor * Value;
 }
 
 void AHRCopterPawn::MoveUp(const float Value)
 {
+	if(!bIsEngineOn) return;
 	TargetUpSpeed = UpSpeedFactor * Value;
 }
 
 void AHRCopterPawn::DoYawRotation(const float Value)
 {
+	if(!bIsEngineOn) return;
 	TargetYawRotSpeed = YawRotateSpeedFactor * Value;
+}
+
+void AHRCopterPawn::EngineStartStop()
+{
+	bEngineStart = !bEngineStart;
+	GetWorldTimerManager().SetTimer(THEngineStartStop, this, &AHRCopterPawn::OnEngineStartStop, 0.05f, true);
 }
 

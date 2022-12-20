@@ -85,13 +85,27 @@ private:
 
 	FVector DeltaLocation;
 
-	UPROPERTY(EditDefaultsOnly, Category="Copter|Rotor")
-	float MainRotorBaseSpeed;
-	UPROPERTY(EditDefaultsOnly, Category="Copter|Rotor")
-	float TailRotorBaseSpeed;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float EngineStartTime;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float EngineStartThreshold;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float EngineStopThreshold;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float MaxMainRotorBaseSpeed;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float MaxTailRotorBaseSpeed;
 	
+	float MainRotorBaseSpeed;
+	float TailRotorBaseSpeed;
 	float MainRotorSpeed;
 	float TailRotorSpeed;
+
+	bool bEngineStart;
+	bool bIsEngineOn;
+	FTimerHandle THEngineStartStop;
+
+	void OnEngineStartStop();
 	
 public:
 	UFUNCTION(BlueprintCallable, Category="Copter|Blades")
@@ -105,6 +119,9 @@ public:
 	void MoveUp(const float Value);
 	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
 	void DoYawRotation(const float Value);
+
+	UFUNCTION(BlueprintCallable, Category="Copter|Engine")
+	void EngineStartStop();
 
 	UFUNCTION(BlueprintGetter, BlueprintPure, Category="Copter|Getters")
 	FORCEINLINE float GetMainRotorSpeed() const { return MainRotorSpeed; }
