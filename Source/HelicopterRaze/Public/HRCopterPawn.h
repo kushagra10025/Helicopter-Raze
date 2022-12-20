@@ -52,9 +52,46 @@ private:
 	TObjectPtr<UStaticMesh> MainBladesBlurMesh;
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Mesh|Blades|Blur", meta=(EditCondition="bCanChangeBladesToBlurBlades"))
 	TObjectPtr<UStaticMesh> TailBladesBlurMesh;
+
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float ForwardSpeedFactor;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float ForwardSpeedAccel;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float RightSpeedFactor;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float RightSpeedAccel;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float UpSpeedFactor;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float UpSpeedAccel;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+    float YawRotateSpeedFactor;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float YawRotateSpeedAccel;
+
+	float ForwardSpeed;
+	float TargetForwardSpeed;
+	float RightSpeed;
+	float TargetRightSpeed;
+	float UpSpeed;
+	float TargetUpSpeed;
+	float YawRotSpeed;
+	float TargetYawRotSpeed;
+
+	FVector DeltaLocation;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category="Copter|Blades")
 	void UpdateBladesIfPossible(bool bSetBlurBlade);
+
+	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
+	void MoveForwards(const float Value);
+	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
+	void MoveRight(const float Value);
+	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
+	void MoveUp(const float Value);
+	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
+	void DoYawRotation(const float Value);
 
 };
