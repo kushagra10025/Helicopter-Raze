@@ -15,4 +15,9 @@ void UHRCopterAnimInstance::NativeInitializeAnimation()
 void UHRCopterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	if(!CopterPawnRef) return;
+
+	MainRotorAngle = FMath::Fmod(MainRotorAngle + (CopterPawnRef->GetMainRotorSpeed() * DeltaSeconds), 360.f);
+	TailRotorAngle = FMath::Fmod(TailRotorAngle + (CopterPawnRef->GetTailRotorSpeed() * DeltaSeconds), 360.f);
 }

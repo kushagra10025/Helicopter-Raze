@@ -22,7 +22,8 @@ AHRCopterPawn::AHRCopterPawn():
 	UpSpeedAccel(2.f),
 	YawRotateSpeedFactor(100.f),
 	YawRotateSpeedAccel(2.f),
-	MainRotorBaseSpeed(400.f)
+	MainRotorBaseSpeed(400.f),
+	TailRotorBaseSpeed(500.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -73,6 +74,9 @@ void AHRCopterPawn::Tick(float DeltaTime)
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Right Speed :  %f"), RightSpeed));
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Up Speed :  %f"), UpSpeed));
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("YawRot Speed :  %f"), YawRotSpeed));
+
+	MainRotorSpeed = FMath::Abs(ForwardSpeed) + FMath::Max(UpSpeed, 0.f) + FMath::Abs(RightSpeed) + MainRotorBaseSpeed;
+	TailRotorSpeed = YawRotSpeed + TailRotorBaseSpeed;
 }
 
 void AHRCopterPawn::BeginPlay()

@@ -87,8 +87,11 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Rotor")
 	float MainRotorBaseSpeed;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Rotor")
+	float TailRotorBaseSpeed;
 	
-	float RotorSpeed;
+	float MainRotorSpeed;
+	float TailRotorSpeed;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category="Copter|Blades")
@@ -103,4 +106,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
 	void DoYawRotation(const float Value);
 
+	UFUNCTION(BlueprintGetter, BlueprintPure, Category="Copter|Getters")
+	FORCEINLINE float GetMainRotorSpeed() const { return MainRotorSpeed; }
+	UFUNCTION(BlueprintGetter, BlueprintPure, Category="Copter|Getters")
+	FORCEINLINE float GetTailRotorSpeed() const { return TailRotorSpeed; }
 };
