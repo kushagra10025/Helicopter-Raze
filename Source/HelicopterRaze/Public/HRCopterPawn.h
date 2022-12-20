@@ -58,9 +58,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
 	float ForwardSpeedAccel;
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float ForwardInclineFactor;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
 	float RightSpeedFactor;
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
 	float RightSpeedAccel;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
+	float RightInclineFactor;
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
 	float UpSpeedFactor;
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Movement")
@@ -80,6 +84,11 @@ private:
 	float TargetYawRotSpeed;
 
 	FVector DeltaLocation;
+
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Rotor")
+	float MainRotorBaseSpeed;
+	
+	float RotorSpeed;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category="Copter|Blades")
