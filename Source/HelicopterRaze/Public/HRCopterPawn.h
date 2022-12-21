@@ -11,6 +11,7 @@ class UStaticMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UStaticMesh;
+class UCameraShakeBase;
 
 UCLASS()
 class HELICOPTERRAZE_API AHRCopterPawn : public APawn
@@ -95,6 +96,12 @@ private:
 	float MaxMainRotorBaseSpeed;
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
 	float MaxTailRotorBaseSpeed;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float CalibrationDistanceFromGround;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float GroundDetectionThreshold;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	TSubclassOf<UCameraShakeBase> EngineStartStopCameraShakeClass;
 	
 	float MainRotorBaseSpeed;
 	float TailRotorBaseSpeed;
@@ -103,6 +110,8 @@ private:
 
 	bool bEngineStart;
 	bool bIsEngineOn;
+	bool bIsGrounded;
+	bool bCanStopEngine;
 	FTimerHandle THEngineStartStop;
 
 	void OnEngineStartStop();
