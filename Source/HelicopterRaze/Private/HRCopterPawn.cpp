@@ -30,6 +30,7 @@ AHRCopterPawn::AHRCopterPawn():
 	MaxTailRotorBaseSpeed(500.f),
 	CalibrationDistanceFromGround(90.f),
 	GroundDetectionThreshold(2.f),
+	MaxHeightCheckDistance(500.f),
 	MainRotorBaseSpeed(0.f),
 	TailRotorBaseSpeed(0.f)
 {
@@ -71,7 +72,7 @@ void AHRCopterPawn::Tick(float DeltaTime)
 	
 	FHitResult HitResult;
 	const FVector Start = GetActorLocation();
-	const FVector End = GetActorLocation() + (-1.f * 500.f * GetActorUpVector());
+	const FVector End = GetActorLocation() + (-1.f * MaxHeightCheckDistance * GetActorUpVector());
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 	if(GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility, QueryParams))
@@ -104,10 +105,12 @@ void AHRCopterPawn::Tick(float DeltaTime)
 	const FRotator NewCopterRotation(NewCopterRotPitch, NewCopterRotYaw, NewCopterRotRoll);
 	SetActorRotation(NewCopterRotation);
 
+	const FVector Velocity(DeltaLocation.X / DeltaTime, DeltaLocation.Y / DeltaTime, DeltaLocation.Z / DeltaTime);
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Forward Speed :  %f"), ForwardSpeed));
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Right Speed :  %f"), RightSpeed));
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Up Speed :  %f"), UpSpeed));
 	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("YawRot Speed :  %f"), YawRotSpeed));
+	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Black, FString::Printf(TEXT("Velocity :  %s"), *Velocity.ToString()));
 	GEngine->AddOnScreenDebugMessage(0, DeltaTime, FColor::Cyan, FString::Printf(TEXT("Engine On :  %s"), (bEngineStart ? *FString("True") : *FString("False"))));
 	GEngine->AddOnScreenDebugMessage(0, DeltaTime, FColor::Cyan, FString::Printf(TEXT("Grounded :  %s"), (bIsGrounded ? *FString("True") : *FString("False"))));
 
@@ -202,6 +205,7 @@ void AHRCopterPawn::DoYawRotation(const float Value)
 void AHRCopterPawn::EngineStartStop()
 {
 	// TODO Fix Bug where the Engine Stops after reaching the ground Threshold if Engine Stop is initiated earlier
+	// If Not able to Fix, Display UI -> Safety Measure Enabled (not a error, a feature :))
 	bEngineStart = !bEngineStart;
 	GetWorldTimerManager().SetTimer(THEngineStartStop, this, &AHRCopterPawn::OnEngineStartStop, 0.05f, true);
 }

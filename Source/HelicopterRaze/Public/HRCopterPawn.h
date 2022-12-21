@@ -102,6 +102,8 @@ private:
 	float GroundDetectionThreshold;
 	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
 	TSubclassOf<UCameraShakeBase> EngineStartStopCameraShakeClass;
+	UPROPERTY(EditDefaultsOnly, Category="Copter|Engine")
+	float MaxHeightCheckDistance;
 	
 	float MainRotorBaseSpeed;
 	float TailRotorBaseSpeed;
