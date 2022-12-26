@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "InputActionValue.h"
 #include "HRCopterPawn.generated.h"
 
 class USkeletalMeshComponent;
@@ -12,6 +13,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UStaticMesh;
 class UCameraShakeBase;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class HELICOPTERRAZE_API AHRCopterPawn : public APawn
@@ -21,9 +24,27 @@ class HELICOPTERRAZE_API AHRCopterPawn : public APawn
 public:
 	AHRCopterPawn();
 	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|MappingContexts")
+	UInputMappingContext* InGameMappingContext;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|Actions|Movement")
+	UInputAction* MoveForwardsAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|Actions|Movement")
+	UInputAction* MoveRightAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|Actions|Movement")
+	UInputAction* MoveUpAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|Actions|Movement")
+	UInputAction* YawRotateAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|Actions|Engine")
+	UInputAction* EngineStartStopAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|Actions|Camera")
+	UInputAction* LookRightAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EnhancedInput|Actions|Camera")
+	UInputAction* LookUpAction;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Copter|Mesh", meta=(AllowPrivateAccess=True))
@@ -123,16 +144,21 @@ public:
 	void UpdateBladesIfPossible(bool bSetBlurBlade);
 
 	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
-	void MoveForwards(const float Value);
+	void MoveForwards(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
-	void MoveRight(const float Value);
+	void MoveRight(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
-	void MoveUp(const float Value);
+	void MoveUp(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable, Category="Copter|Movement")
-	void DoYawRotation(const float Value);
+	void DoYawRotation(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable, Category="Copter|Engine")
 	void EngineStartStop();
+
+	UFUNCTION(BlueprintCallable, Category="Copter|Camera")
+	void LookRight(const FInputActionValue& Value);
+	UFUNCTION(BlueprintCallable, Category="Copter|Camera")
+	void LookUp(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintGetter, BlueprintPure, Category="Copter|Getters")
 	FORCEINLINE float GetMainRotorSpeed() const { return MainRotorSpeed; }
